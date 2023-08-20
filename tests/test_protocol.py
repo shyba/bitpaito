@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from bitpaito.protocol import HandshakeMessage
+from bitpaito.protocol import HandshakeMessage, TorrentProtocolStateMachine
 
 
 class TestHandshakeMessage(TestCase):
@@ -14,3 +14,16 @@ class TestHandshakeMessage(TestCase):
         self.assertEquals(bytes([i for i in range(20)]), encoded[-40:-20])
         h2 = HandshakeMessage.decode(encoded)
         self.assertEqual(h, h2)
+
+
+class TestProtocol(TestCase):
+    def test_handshake_keep_alive(self):
+        state = TorrentProtocolStateMachine()
+        handshake = HandshakeMessage(bytes([i for i in range(20)]))
+        stream = handshake.encode()
+        stream += bytes([0]*4)  # keep-alive
+        stream += bytes([0]*4)  # keep-alive
+        state.eat(stream)
+        self.assertTrue(state.valid)
+        self.assertEqual(state.handshake, handshake)
+        self.assertEqual(2, len(state.messages))
