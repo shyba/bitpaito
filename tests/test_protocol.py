@@ -27,3 +27,10 @@ class TestProtocol(TestCase):
         self.assertTrue(state.valid)
         self.assertEqual(state.handshake, handshake)
         self.assertEqual(2, len(state.messages))
+        # chunked testing, worst case (getting byte by byte)
+        state = TorrentProtocolStateMachine()
+        for chunk in stream:
+            state.eat(bytes([chunk]))
+        self.assertTrue(state.valid)
+        self.assertEqual(state.handshake, handshake)
+        self.assertEqual(2, len(state.messages))
