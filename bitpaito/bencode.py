@@ -17,16 +17,16 @@ def decode(what: bytes):
             elif c == ord(b':'):
                 if state == WANT_COLON:
                     state = WANT_ATOMS
-                    ret = ""
+                    ret = []
                 else:
                     raise ValueError(f'Got a : in state {state}')
             else:
                 raise ValueError(f'Unknown state {state} with token {chr(c)}')
         elif state == WANT_ATOMS and size > 0:
-            ret += chr(c)
+            ret.append(c)
             size -= 1
             if size == 0:
-                return ret
+                return bytes(ret).decode()
         else:
             raise ValueError(f'Unknown state {state} with token {chr(c)}')
     raise ValueError(f'Unexpected end at {state}')
