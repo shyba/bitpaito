@@ -16,3 +16,6 @@ class TestBencode(TestCase):
         self.assertEqual('something', bencode.decode(b'9:something'))
         self.assertEqual('batata frita', bencode.decode(b'12:batata frita'))
         self.assertEqual('😱', bencode.decode('4:😱'.encode()))
+        self.assertEqual(42, bencode.decode(b'i42e'))
+        self.assertEqual(-42, bencode.decode(b'i-42e'))
+        self.assertEqual(40_000_000_000, bencode.decode(b'i40000000000e'))

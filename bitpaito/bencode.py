@@ -11,9 +11,12 @@ def decode(what: bytes):
     state = START
     size = 0
     ret = None
+    neg = False
     for c in what:
         if state in (START, WANT_COLON):
-            if ord(b'0') <= c <= ord(b'9'):
+            if c == ord(b'i'):
+                state = WANT_INTEGER
+            elif ord(b'0') <= c <= ord(b'9'):
                 state = WANT_COLON
                 size = size*10 + int(chr(c))
             elif c == ord(b':'):
@@ -29,6 +32,15 @@ def decode(what: bytes):
             size -= 1
             if size == 0:
                 return bytes(ret).decode()
+        elif state == WANT_INTEGER:
+            if c == ord(b'-') and size == 0:
+                neg = True
+            elif ord(b'0') <= c <= ord(b'9'):
+                size = size*10 + int(chr(c))
+            elif c == ord(b'e'):
+                return size if not neg else -size
+            else:
+                raise ValueError(f'Got {chr(c)}({c}) expecting integer or e.')
         else:
             raise ValueError(f'Unknown state {state} with token {chr(c)}')
     raise ValueError(f'Unexpected end at {state}')
@@ -38,3 +50,4 @@ def decode(what: bytes):
 START = 1
 WANT_COLON = 2
 WANT_ATOMS = 3
+WANT_INTEGER = 4
