@@ -34,3 +34,5 @@ class TestBencode(TestCase):
         self.assertEqual([1, 2, 3], bencode.decode(b'li1ei2ei3ee'))
         self.assertEqual(["e"], bencode.decode(b'l1:ee'))
         self.assertEqual([], bencode.decode(b'le'))
+        self.assertEqual([[]], bencode.decode(b'llee'))
+        self.assertEqual(["foe", ["ee", 2], 3], bencode.decode(b'l3:foel2:eei2eei3ee'))
