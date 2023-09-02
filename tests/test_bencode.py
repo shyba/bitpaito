@@ -40,3 +40,7 @@ class TestBencode(TestCase):
         self.assertEqual([], bencode.decode(b'le'))
         self.assertEqual([[]], bencode.decode(b'llee'))
         self.assertEqual(["foe", ["ee", 2], 3], bencode.decode(b'l3:foel2:eei2eei3ee'))
+        # dict
+        self.assertEqual({}, bencode.decode(b'de'))
+        self.assertEqual(bencode.decode(b'd4:pota2:to3:recdi1eli1ei2ee1:3i4eee'),
+                         {"pota": "to", "rec": {1: [1, 2], "3": 4}})

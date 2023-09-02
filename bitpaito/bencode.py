@@ -12,7 +12,29 @@ def encode(what: str | bytes | int | list | dict):
 
 
 def decode(what: bytes, partial=False):
-    if what[0] == ord(b'l'):
+    if what[0] == ord(b'd'):
+        rem = what[1:]
+        current = {}
+        key = None
+        while rem and rem[0] != ord(b'e'):
+            if rem[0] in (ord(b'l'), ord(b'd')):
+                val, rem = decode(rem, partial=True)
+            else:
+                val, rem = _decode(rem)
+            if key:
+                current[key] = val
+                key = None
+            else:
+                key = val
+        if key is not None:
+            raise ValueError('Error decoding dict with odd items.')
+        elif rem == b'e':
+            return current
+        elif rem[0] == ord(b'e') and partial:
+            return current, rem[1:]
+        else:
+            raise ValueError(f'Unexpected trailing data: {rem}')
+    elif what[0] == ord(b'l'):
         rem = what[1:]
         current = []
         while rem and rem[0] != ord(b'e'):
