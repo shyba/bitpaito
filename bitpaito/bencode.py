@@ -10,11 +10,28 @@ def encode(what: str | bytes | int | list):
 
 
 def decode(what: bytes):
+    if what[0] == ord(b'l'):
+        rem = what[1:]
+        current = []
+        while rem and rem != b'e':
+            val, rem = _decode(rem)
+            current.append(val)
+        if rem == b'e':
+            return current
+        else:
+            raise ValueError(f'Unexpected trailing data: {rem}')
+    val, rem = _decode(what)
+    if rem:
+        raise ValueError(f'Unexpected trailing data: {rem}')
+    return val
+
+
+def _decode(what: bytes):
     state = START
     size = 0
     ret = None
     neg = False
-    for c in what:
+    for idx, c in enumerate(what):
         if state in (START, WANT_COLON):
             if c == ord(b'i'):
                 state = WANT_INTEGER
@@ -33,14 +50,14 @@ def decode(what: bytes):
             ret.append(c)
             size -= 1
             if size == 0:
-                return bytes(ret).decode()
+                return bytes(ret).decode(), what[idx+1:]
         elif state == WANT_INTEGER:
             if c == ord(b'-') and size == 0:
                 neg = True
             elif ord(b'0') <= c <= ord(b'9'):
                 size = size*10 + int(chr(c))
             elif c == ord(b'e'):
-                return size if not neg else -size
+                return size if not neg else -size, what[idx+1:]
             else:
                 raise ValueError(f'Got {chr(c)}({c}) expecting integer or e.')
         else:
