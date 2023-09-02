@@ -1,12 +1,14 @@
-def encode(what: str | bytes | int | list):
+def encode(what: str | bytes | int | list | dict):
     if isinstance(what, str):
         what = what.encode()
     if isinstance(what, bytes):
         return str(len(what)).encode() + b':' + what
-    if isinstance(what, int):
+    elif isinstance(what, int):
         return b'i'+str(what).encode()+b'e'
-    if isinstance(what, list):
+    elif isinstance(what, list):
         return b'l'+b''.join(encode(i) for i in what)+b'e'
+    elif isinstance(what, dict):
+        return b'd'+b''.join(b''.join(encode(i) for i in item) for item in what.items())+b'e'
 
 
 def decode(what: bytes, partial=False):

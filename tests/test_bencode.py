@@ -19,6 +19,10 @@ class TestBencode(TestCase):
         self.assertEqual(b'li1ei2ei3ee', bencode.encode([1, 2, 3]))
         self.assertEqual(b'l1:ee', bencode.encode(["e"]))
         self.assertEqual(b'le', bencode.encode([]))
+        # dict
+        self.assertEqual(b'de', bencode.encode({}))
+        self.assertEqual(b'd4:pota2:to3:recdi1eli1ei2ee1:3i4eee',
+                         bencode.encode({"pota": "to", "rec": {1: [1, 2], "3": 4}}))
 
     def test_decode(self):
         # bit strings
