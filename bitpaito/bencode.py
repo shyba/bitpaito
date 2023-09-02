@@ -1,8 +1,10 @@
-def encode(what: str | bytes):
+def encode(what: str | bytes | int):
     if isinstance(what, str):
         what = what.encode()
     if isinstance(what, bytes):
         return str(len(what)).encode() + b':' + what
+    if isinstance(what, int):
+        return b'i'+str(what).encode()+b'e'
 
 
 def decode(what: bytes):

@@ -8,6 +8,9 @@ class TestBencode(TestCase):
         self.assertEqual(b'9:something', bencode.encode('something'))
         self.assertEqual(b'14:something else', bencode.encode('something else'))
         self.assertEqual(b'4:'+'😱'.encode(), bencode.encode('😱'))
+        self.assertEqual(b'i42e', bencode.encode(42))
+        self.assertEqual(b'i-42e', bencode.encode(-42))
+        self.assertEqual(b'i40000000000e', bencode.encode(40_000_000_000))
 
     def test_decode(self):
         self.assertEqual('something', bencode.decode(b'9:something'))
