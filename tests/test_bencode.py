@@ -35,12 +35,13 @@ class TestBencode(TestCase):
         self.assertEqual(40_000_000_000, bencode.decode(b'i40000000000e'))
         # lists
         self.assertEqual(["foe", 2], bencode.decode(b'l3:foei2ee'))
-        self.assertEqual([1, 2, 3], bencode.decode(b'li1ei2ei3ee'))
+        self.assertEqual([0, 1, 2, 3], bencode.decode(b'li0ei1ei2ei3ee'))
         self.assertEqual(["e"], bencode.decode(b'l1:ee'))
         self.assertEqual([], bencode.decode(b'le'))
         self.assertEqual([[]], bencode.decode(b'llee'))
         self.assertEqual(["foe", ["ee", 2], 3], bencode.decode(b'l3:foel2:eei2eei3ee'))
         # dict
         self.assertEqual({}, bencode.decode(b'de'))
+        self.assertEqual({0: 0}, bencode.decode(b'di0ei0ee'))
         self.assertEqual(bencode.decode(b'd4:pota2:to3:recdi1eli1ei2ee1:3i4eee'),
                          {"pota": "to", "rec": {1: [1, 2], "3": 4}})

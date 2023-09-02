@@ -21,7 +21,7 @@ def decode(what: bytes, partial=False):
                 val, rem = decode(rem, partial=True)
             else:
                 val, rem = _decode(rem)
-            if key:
+            if key is not None:
                 current[key] = val
                 key = None
             else:
