@@ -16,6 +16,9 @@ class TestBencode(TestCase):
         self.assertEqual(b'i40000000000e', bencode.encode(40_000_000_000))
         # list
         self.assertEqual(b'l3:fooi2ee', bencode.encode(["foo", 2]))
+        self.assertEqual(b'li1ei2ei3ee', bencode.encode([1,2,3]))
+        self.assertEqual(b'l1:ae', bencode.encode(["a"]))
+        self.assertEqual(b'le', bencode.encode([]))
 
     def test_decode(self):
         self.assertEqual('something', bencode.decode(b'9:something'))
