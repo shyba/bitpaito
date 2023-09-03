@@ -79,7 +79,7 @@ def _decode(what: bytes):
             ret.append(c)
             size -= 1
             if size == 0:
-                return bytes(ret).decode(), what[idx+1:]
+                return bytes(ret), what[idx+1:]
         elif state == WANT_INTEGER:
             if c == ord(b'-') and size == 0:
                 neg = True

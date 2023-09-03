@@ -26,22 +26,22 @@ class TestBencode(TestCase):
 
     def test_decode(self):
         # bit strings
-        self.assertEqual('something', bencode.decode(b'9:something'))
-        self.assertEqual('batata frita', bencode.decode(b'12:batata frita'))
-        self.assertEqual('😱', bencode.decode('4:😱'.encode()))
+        self.assertEqual(b'something', bencode.decode(b'9:something'))
+        self.assertEqual(b'batata frita', bencode.decode(b'12:batata frita'))
+        self.assertEqual('😱'.encode(), bencode.decode('4:😱'.encode()))
         # integers
         self.assertEqual(42, bencode.decode(b'i42e'))
         self.assertEqual(-42, bencode.decode(b'i-42e'))
         self.assertEqual(40_000_000_000, bencode.decode(b'i40000000000e'))
         # lists
-        self.assertEqual(["foe", 2], bencode.decode(b'l3:foei2ee'))
+        self.assertEqual([b'foe', 2], bencode.decode(b'l3:foei2ee'))
         self.assertEqual([0, 1, 2, 3], bencode.decode(b'li0ei1ei2ei3ee'))
-        self.assertEqual(["e"], bencode.decode(b'l1:ee'))
+        self.assertEqual([b'e'], bencode.decode(b'l1:ee'))
         self.assertEqual([], bencode.decode(b'le'))
         self.assertEqual([[]], bencode.decode(b'llee'))
-        self.assertEqual(["foe", ["ee", 2], 3], bencode.decode(b'l3:foel2:eei2eei3ee'))
+        self.assertEqual([b'foe', [b'ee', 2], 3], bencode.decode(b'l3:foel2:eei2eei3ee'))
         # dict
         self.assertEqual({}, bencode.decode(b'de'))
         self.assertEqual({0: 0}, bencode.decode(b'di0ei0ee'))
         self.assertEqual(bencode.decode(b'd4:pota2:to3:recdi1eli1ei2ee1:3i4eee'),
-                         {"pota": "to", "rec": {1: [1, 2], "3": 4}})
+                         {b"pota": b"to", b"rec": {1: [1, 2], b"3": 4}})
