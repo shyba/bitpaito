@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
-
-PEER_ID = b'TEST-CLIENT---------'
-MAGIC = b'\x13BitTorrent protocol'
+from .constants import PEER_ID, MAGIC
 
 
 @dataclass
