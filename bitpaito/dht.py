@@ -30,6 +30,10 @@ class DHT:
     def __init__(self, network: 'DHTNetwork'):
         self.network = network
 
+    @property
+    def external_addr(self):
+        return self.network.external_ip, self.network.external_port
+
     def ping(self, peer: RPCPeer):
         return self.network.query(peer, 'ping')
 
@@ -42,6 +46,8 @@ class DHTNetwork:
         self.protocol = protocol
         self.node_id = None
         self.port = protocol.port
+        self.external_ip = None
+        self.external_port = None
         self.protocol.add_listener(self.handle_packet)
         self.pending = {}
         self._tgen = cycle(range(255))
@@ -69,6 +75,9 @@ class DHTNetwork:
         if data.get(b'ip'):
             data[b'ip'] = from_compact_ip4(data[b'ip'])
             log.debug("%s TOLD WE ARE %s", addr, data[b"ip"])
+            # todo: validate, infer NAT, detect changes and find from majority
+            self.external_ip = self.external_ip or str(data[b'ip'][0])
+            self.external_port = self.external_port or data[b'ip'][1]
         if data[b'y'] in (b'r', b'e'):
             cb = self.pending.get((data[b't'], addr[0], addr[1]))
             if not cb:
