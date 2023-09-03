@@ -33,6 +33,9 @@ class DHT:
     def ping(self, peer: RPCPeer):
         return self.network.query(peer, 'ping')
 
+    def get_peer(self, ip, port):
+        return self.network.get_peer(ip, port)
+
 
 class DHTNetwork:
     def __init__(self, protocol: 'DHTProtocol'):
@@ -43,7 +46,12 @@ class DHTNetwork:
         self.pending = {}
         self._tgen = cycle(range(255))
         self.timeout = DHT_DEFAULT_TIMEOUT
-        self.peers = {}
+        self.peer_by_address = {}
+
+    def get_peer(self, ip, port):
+        if peer := self.peer_by_address.get(to_compact_ip4(ip, port)):
+            return peer
+        return RPCPeer(ip, port, None)
 
     @property
     def query_id(self) -> bytes:
@@ -69,6 +77,8 @@ class DHTNetwork:
                 return log.debug("DROP REPEATED RESPONSE FROM %s", addr)
             else:
                 if data[b'y'] == b'r':
+                    if b'id' in data[b'r']:
+                        self.peer_by_address[to_compact_ip4(*addr)] = RPCPeer(*addr, data[b'r'][b'id'])
                     cb.set_result(data[b'r'])
                 else:
                     cb.set_exception(Exception(data.get(b'e', data)))

@@ -19,4 +19,6 @@ class TestDHT(IsolatedAsyncioTestCase):
 
     async def test_ping(self):
         other = await self.addNode()
-        await self.node.ping(RPCPeer('127.0.0.1', other.network.port, None))
+        self.assertEqual(None, self.node.get_peer('127.0.0.1', other.network.port).node_id)
+        await self.node.ping(self.node.get_peer('127.0.0.1', other.network.port))
+        self.assertNotEqual(None, self.node.get_peer('127.0.0.1', other.network.port).node_id)
